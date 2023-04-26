@@ -32,7 +32,7 @@ Normally you'd expect to use an admin account with full privileges when using th
 
 ```
 # radosgw-admin user create --uid=exporter --display-name="RGW exporter User"
-# radosgw-admin caps add --uid=exporter --caps=""metadata=read;usage=read;info=read;buckets=read;users=read"
+# radosgw-admin caps add --uid=exporter --caps="metadata=read;usage=read;info=read;buckets=read;users=read"
 ```
 
 ### From the CLI
