@@ -62,7 +62,7 @@ func main() {
 	}
 
 	candidateHosts := strings.Split(hostString, ",")
-	log.Info("RGW_HOST provides %d hosts", len(candidateHosts))
+	log.Infof("RGW_HOST provides %d hosts", len(candidateHosts))
 	hosts, err := utils.ValidateHosts(candidateHosts)
 	if err != nil {
 		log.Fatalln("No valid endpoints provided. Aborting")
