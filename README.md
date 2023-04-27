@@ -60,7 +60,7 @@ Once built, place your environment variables in a file and modify permissions to
 # podman run -d --network=host --env-file=rgw-exporter.env --name=rgw-exporter localhost/rgw-exporter:latest
 ```
 
-Note, this example is using a local registry
+Note, this example is using a local registry. For testing you can : ```podman pull docker.io/pcuzner/rgw-exporter:ff720512```
 
 *The rgw-exporter container is approx. 24MB*
 
