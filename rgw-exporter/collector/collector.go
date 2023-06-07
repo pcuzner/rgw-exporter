@@ -219,7 +219,7 @@ func collectUsers(connection *rgw.API) []string {
 	users, err := connection.GetUsers(context.Background())
 	if err != nil {
 		// TODO - don't fail if there are no users
-		log.Fatal("Unable to get a user list: ", err)
+		log.Error("Unable to get a user list: ", err)
 	}
 	return *users
 }
