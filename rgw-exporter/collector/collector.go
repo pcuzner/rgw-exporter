@@ -218,8 +218,10 @@ func getRGWConnection(hosts []string, offset int, accessKey string, secretKey st
 func collectUsers(connection *rgw.API) []string {
 	users, err := connection.GetUsers(context.Background())
 	if err != nil {
-		// TODO - don't fail if there are no users
 		log.Error("Unable to get a user list: ", err)
+		// GetUsers can return nil instead of an empty slice when there is a problem,
+		// so to account for that, we return an empty slice here.
+		return []string{}
 	}
 	return *users
 }
