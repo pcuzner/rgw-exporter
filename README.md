@@ -118,3 +118,15 @@ ceph_rgw_user_total_usage_bytes{uid="admin"} 0
 ceph_rgw_user_total_usage_bytes{uid="dashboard"} 0
 ceph_rgw_user_total_usage_bytes{uid="exporter"} 1.048576e+06
 ```
+
+## Troubleshooting
+1. When you run against a https enabled RGW endpoint that is using a Common-Name only based self-signed certificate  
+   the exporter will fail to connect, since Common Name certs have been deprecated.  
+   e.g.  
+   ```
+   level=error msg="Unable to get a user list: Get \"https://1.1.1.1:8443/admin/metadata/user?\": x509: cannot validate certificate for 1.1.1.1 because it doesn't contain any IP SANs"
+   ```
+2. If you're using self-signed certs, you'll need to skip TLS verification with the `-skip-tls-verify` flag, otherwise you'll see somthing like this in the log.
+   ```
+   time="2024-11-19 00:21:13" level=error msg="Unable to get a user list: Get \"https://1.1.1.1:8444/admin/metadata/user?\": x509: certificate signed by unknown authority"
+   ```
