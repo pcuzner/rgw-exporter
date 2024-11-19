@@ -18,4 +18,5 @@ type Config struct {
 	SecretKey        string
 	ThresholdSize    uint64
 	ThresholdObjects uint64
+	SkipTLSVerify    bool
 }
