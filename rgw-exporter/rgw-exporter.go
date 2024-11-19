@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	// "log"
+	"crypto/tls"
 	"net/http"
 	"os"
 	"strings"
@@ -35,6 +36,7 @@ func main() {
 
 	// flag returns a pointer, not a value..
 	port := flag.Int("port", defaults.DefaultPort, "port for the exporter to bind to")
+	skipTLSVerify := flag.Bool("skip-tls-verify", false, "skip TLS verification")
 	debug := flag.Bool("debug", true, "run in debug mode")
 	thresholdSize := flag.String("threshold.size", defaults.MinBucketSize, "minimum bucket size for per bucket reporting")
 	thresholdObjects := flag.Uint64("threshold.objects", defaults.MinObjectCount, "minimum object count for per bucket reporting")
@@ -62,7 +64,7 @@ func main() {
 	}
 
 	candidateHosts := strings.Split(hostString, ",")
-	log.Infof("RGW_HOST provides %d hosts", len(candidateHosts))
+	log.Infof("RGW_HOST variable provides %d hosts", len(candidateHosts))
 	hosts, err := utils.ValidateHosts(candidateHosts)
 	if err != nil {
 		log.Fatalln("No valid endpoints provided. Aborting")
@@ -73,11 +75,18 @@ func main() {
 	config.SecretKey = secretKey
 	config.ThresholdObjects = *thresholdObjects
 	config.ThresholdSize = minSize
+	config.SkipTLSVerify = *skipTLSVerify
 
 	log.Info("Parameters:")
 	log.Infof("- RGW endpoints    : %d", len(hosts))
 	log.Infof("- Min object count : %d", *thresholdObjects)
 	log.Infof("- Min bucket size  : %d bytes (%s)", minSize, *thresholdSize)
+	log.Infof("- Skip TLS verify  : %t", *skipTLSVerify)
+
+	if *skipTLSVerify {
+		log.Warning("Skipping TLS verification - Are you sure you want to do this?")
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 
 	rgwCollector := collector.NewRGWCollector(&config)
 	prometheus.MustRegister(rgwCollector)
