@@ -6,6 +6,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"time"
 
 	// "log"
 	"crypto/tls"
@@ -37,6 +38,7 @@ func main() {
 	// flag returns a pointer, not a value..
 	port := flag.Int("port", defaults.DefaultPort, "port for the exporter to bind to")
 	skipTLSVerify := flag.Bool("skip-tls-verify", false, "skip TLS verification")
+	timeout := flag.Int("timeout", 30, "default client timeout")
 	debug := flag.Bool("debug", true, "run in debug mode")
 	thresholdSize := flag.String("threshold.size", defaults.MinBucketSize, "minimum bucket size for per bucket reporting")
 	thresholdObjects := flag.Uint64("threshold.objects", defaults.MinObjectCount, "minimum object count for per bucket reporting")
@@ -87,6 +89,8 @@ func main() {
 		log.Warning("Skipping TLS verification - Are you sure you want to do this?")
 		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
+
+	http.DefaultClient.Timeout = time.Duration(*timeout) * time.Second
 
 	rgwCollector := collector.NewRGWCollector(&config)
 	prometheus.MustRegister(rgwCollector)
